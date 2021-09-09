@@ -3,8 +3,8 @@
 
 import * as React from 'react'
 import {useCombobox} from '../use-combobox'
-import {getItems} from '../filter-cities'
-import {useForceRerender} from '../utils'
+import {getItems} from '../workerized-filter-cities'
+import {useAsync, useForceRerender} from '../utils'
 
 function Menu({
   items,
@@ -60,7 +60,15 @@ function App() {
   const forceRerender = useForceRerender()
   const [inputValue, setInputValue] = React.useState('')
 
-  const allItems = React.useMemo(() => getItems(inputValue), [inputValue])
+  const {
+    data: allItems,
+    run,
+    error,
+    status,
+  } = useAsync({data: [], status: 'pending'})
+  React.useEffect(() => {
+    run(getItems(inputValue))
+  }, [inputValue, run])
   const items = allItems.slice(0, 100)
 
   const {
@@ -84,6 +92,14 @@ function App() {
       ),
     itemToString: item => (item ? item.name : ''),
   })
+
+  if (error) {
+    return <div>oops</div>
+  }
+
+  if (status === 'pending') {
+    return <div>loading...</div>
+  }
 
   return (
     <div className="city-app">
