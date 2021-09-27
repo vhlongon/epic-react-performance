@@ -108,14 +108,12 @@ Cell = React.memo(Cell)
 function DogNameInput() {
   // 🐨 replace the useAppState and useAppDispatch with a normal useState here
   // to manage the dogName locally within this component
-  const state = useAppState()
-  const dispatch = useAppDispatch()
-  const {dogName} = state
+  const [dogName, setDogname] = React.useState('')
 
   function handleChange(event) {
     const newDogName = event.target.value
     // 🐨 change this to call your state setter that you get from useState
-    dispatch({type: 'TYPED_IN_DOG_INPUT', dogName: newDogName})
+    setDogname(newDogName)
   }
 
   return (
